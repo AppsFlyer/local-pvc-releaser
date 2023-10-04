@@ -1,1 +1,0 @@
-local-pvc-releaser {{ .Values.controller.image.tag | default .Chart.AppVersion }} has been deployed successfully!
