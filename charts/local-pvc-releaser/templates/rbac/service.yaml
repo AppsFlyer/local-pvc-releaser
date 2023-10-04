@@ -1,0 +1,27 @@
+{{- if eq .Values.prometheus.portType "http" -}}
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    control-plane: controller-manager
+    app.kubernetes.io/name: service
+    app.kubernetes.io/instance: controller-manager-metrics-service
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: local-pvc-releaser
+    app.kubernetes.io/part-of: local-pvc-releaser
+    app.kubernetes.io/managed-by: helm
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics                                                                                                                                                                                 │
+    prometheus.io/port: "8080"
+  name: controller-manager-metrics-service
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    control-plane: controller-manager
+{{- end -}}
