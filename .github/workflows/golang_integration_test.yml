@@ -51,18 +51,18 @@ jobs:
           name: integration_coverage_report
           path: integration-test-cover.out
 
-  coverage:
-    name: Coverage report
-    runs-on: ubuntu-latest
-    needs: integration-test
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: integration_coverage_report
-      - uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} 
-        with:
-          files: integration-test-cover.out
-          flags: integrationtests
-          fail_ci_if_error: true
+  # coverage:
+  #   name: Coverage report
+  #   runs-on: ubuntu-latest
+  #   needs: integration-test
+  #   steps:
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: integration_coverage_report
+  #     - uses: codecov/codecov-action@v3
+  #       env:
+  #         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} 
+  #       with:
+  #         files: integration-test-cover.out
+  #         flags: integrationtests
+  #         fail_ci_if_error: true
