@@ -28,7 +28,7 @@ default values.
 |----------------------------------------------------------|-----------------------------------------------------------|------------------------------------------------------------------|
 | `controller.name`                                        | Number of replicas for the controller                     | `local-pvc-releaser`                                             |
 | `controller.replicas`                                    | Name of the controller pod                                | `1`                                                              |
-| `controller,image.repository`                            | Local PVC releaser repository name                        | `packages.af-eng.io/docker/realtime-platform/local-pvc-releaser` |
+| `controller,image.repository`                            | Local PVC releaser repository name                        | `appsflyer/local-pvc-releaser` |
 | `controller.image.tag`                                   | Local PVC releaser image tag                              | `v0.1.0`                                                         |
 | `controller.image.pullPolicy`                            | Image pull policy                                         | `Always`                                                         |
 | `controller.resources`                                   | Local PVC Releaser resource requests & limits             | `{}`                                                             |
