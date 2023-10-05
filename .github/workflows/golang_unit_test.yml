@@ -1,0 +1,27 @@
+name: Go Unit Test
+
+on:
+  push:
+    branches-ignore:
+     - main
+     - master
+  pull_request:
+    branches:    
+      - main
+      - master
+  release:
+
+jobs:
+  vet:
+    name: vet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: './go.mod'
+      - name: Vet
+        run: |
+          go vet ./...
