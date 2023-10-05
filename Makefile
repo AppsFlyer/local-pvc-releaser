@@ -74,7 +74,7 @@ lint: $(GOLINT)
 
 .PHONY: integration-test
 integration-test: generate fmt vet envtest ## Run tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test ./test/... -coverprofile cover.out
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test ./test/... -coverprofile integration-cover.out
 
 .PHONY: unit-test
 unit-test: generate fmt vet envtest ## Run tests.
