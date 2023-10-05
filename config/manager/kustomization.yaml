@@ -4,5 +4,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
   - name: controller
-    newName: packages.af-eng.io/docker/realtime-platform/local-pvc-releaser
+    newName: appsflyer/local-pvc-releaser
     newTag: devtag
