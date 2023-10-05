@@ -24,6 +24,7 @@ jobs:
           go-version-file: './go.mod'
       - name: Vet
         run: |
+          go vet ./...
     
   fmt:
     name: fmt
@@ -38,3 +39,53 @@ jobs:
       - name: Vet
         run: |
           go fmt ./...
+
+  unit-test:
+    name: unit-test
+    needs: ["fmt", "vet"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: './go.mod'
+
+      # - name: Download envtest setup script
+      #   run: curl -sSLo setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/master/hack/setup-envtest.sh
+        
+      # - name: Make the script executable
+      #   run: chmod +x setup-envtest.sh
+          
+      # - name: Setup envtest
+      #   run: ./setup-envtest.sh   
+
+      # - name: Install Controller-gen
+      #   run: GO111MODULE=on go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.13.0
+
+      # - name: Install Kustomize
+      #   run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+      
+      - name: run unit tests
+        run: make unit-test
+      - uses: actions/upload-artifact@v3
+        with:
+          name: unit_coverage_report
+          path: unit-test-cover.out
+  
+  coverage:
+    name: Coverage report
+    runs-on: ubuntu-latest
+    needs: unit-test
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: unit_coverage_report
+      - uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: unit-test-cover.out
+          flags: unittests
+          fail_ci_if_error: true
