@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
+	"k8s.io/utils/strings/slices"
 	"strconv"
 
 	"github.com/AppsFlyer/local-pvc-releaser/internal/exporters"
@@ -40,8 +41,8 @@ const (
 	NodeControllerComponent = "node-controller"
 )
 
-// NodeTerminationPVCReconciler reconciles a PersistentVolumeClaim object
-type NodeTerminationPVCReconciler struct {
+// PVCReconciler reconciles a PersistentVolumeClaim object
+type PVCReconciler struct {
 	client.Client
 	Scheme            *runtime.Scheme
 	Logger            *logr.Logger
@@ -57,7 +58,7 @@ type NodeTerminationPVCReconciler struct {
 // +kubebuilder:rbac:groups="",resources=persistentvolumeclaims,verbs=get;list;watch;delete
 // +kubebuilder:rbac:groups="",resources=persistentvolumes,verbs=get;list;watch
 
-func (r *NodeTerminationPVCReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *PVCReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	nodeTerminationEvent := &v1.Event{}
 	if err := r.Get(ctx, req.NamespacedName, nodeTerminationEvent); err != nil {
 		r.Logger.Error(err, "did not find the related NodeTermination event")
@@ -101,7 +102,7 @@ func (r *NodeTerminationPVCReconciler) Reconcile(ctx context.Context, req ctrl.R
 	return ctrl.Result{}, nil
 }
 
-func (r *NodeTerminationPVCReconciler) CleanPVCS(ctx context.Context, pvcs []*v1.PersistentVolumeClaim) error {
+func (r *PVCReconciler) CleanPVCS(ctx context.Context, pvcs []*v1.PersistentVolumeClaim) error {
 	for _, pvc := range pvcs {
 
 		if r.PvcSelector && pvc.Annotations[r.PvcAnoCustomKey] != r.PvcAnoCustomValue {
@@ -123,7 +124,7 @@ func (r *NodeTerminationPVCReconciler) CleanPVCS(ctx context.Context, pvcs []*v1
 	return nil
 }
 
-func (r *NodeTerminationPVCReconciler) FilterPVListByNodeName(pvList *v1.PersistentVolumeList, nodeName string) []*v1.PersistentVolume {
+func (r *PVCReconciler) FilterPVListByNodeName(pvList *v1.PersistentVolumeList, nodeName string) []*v1.PersistentVolume {
 	var relatedPVs []*v1.PersistentVolume
 
 	for i := 0; i < len(pvList.Items); i++ {
@@ -135,7 +136,7 @@ func (r *NodeTerminationPVCReconciler) FilterPVListByNodeName(pvList *v1.Persist
 
 		for _, nst := range pv.Spec.NodeAffinity.Required.NodeSelectorTerms {
 			for _, matchEx := range nst.MatchExpressions {
-				if containsString(matchEx.Values, nodeName) {
+				if slices.Contains(matchEx.Values, nodeName) {
 					r.Logger.Info(fmt.Sprintf("pv - %s is bounded to node - %s. will be marked for pvc cleanup", pv.Name, nodeName))
 					relatedPVs = append(relatedPVs, pv)
 
@@ -148,7 +149,7 @@ func (r *NodeTerminationPVCReconciler) FilterPVListByNodeName(pvList *v1.Persist
 	return relatedPVs
 }
 
-func (r *NodeTerminationPVCReconciler) FilterPVCListByPV(pvcList *v1.PersistentVolumeClaimList, pv *v1.PersistentVolume) *v1.PersistentVolumeClaim {
+func (r *PVCReconciler) FilterPVCListByPV(pvcList *v1.PersistentVolumeClaimList, pv *v1.PersistentVolume) *v1.PersistentVolumeClaim {
 	for i := 0; i < len(pvcList.Items); i++ {
 		claim := &pvcList.Items[i]
 
@@ -161,7 +162,7 @@ func (r *NodeTerminationPVCReconciler) FilterPVCListByPV(pvcList *v1.PersistentV
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *NodeTerminationPVCReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *PVCReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&v1.Event{}).WithEventFilter(onNodeTerminationEventCreatedPredicate()).
 		Complete(r)
@@ -177,13 +178,4 @@ func onNodeTerminationEventCreatedPredicate() predicate.Predicate {
 		UpdateFunc:  func(e event.UpdateEvent) bool { return false },
 		GenericFunc: func(e event.GenericEvent) bool { return false },
 	}
-}
-
-func containsString(slice []string, target string) bool {
-	for _, str := range slice {
-		if str == target {
-			return true
-		}
-	}
-	return false
 }

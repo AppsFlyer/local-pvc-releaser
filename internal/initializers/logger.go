@@ -13,16 +13,11 @@ import (
 )
 
 const (
-	DEFAULT_LOG_LEVEL = "info"
-	LOG_LEVEL_ENV     = "LOG_LEVEL"
+	LOG_LEVEL_ENV = "LOG_LEVEL"
 )
 
 func NewLogger(devLogging bool, dryrun bool) (*logr.Logger, error) {
 	logLevel := strings.ToLower(os.Getenv(LOG_LEVEL_ENV))
-
-	if logLevel == "" {
-		logLevel = DEFAULT_LOG_LEVEL
-	}
 
 	var level zap.AtomicLevel
 	if err := level.UnmarshalText([]byte(logLevel)); err != nil {

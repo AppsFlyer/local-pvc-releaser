@@ -42,6 +42,9 @@ controller:
   # Enable controller in dry-run mode
   dryRun: false
 
+  # Define controller log level
+  # logLevel: info
+
   # Enable zap logger with development mode with stack tracing
   loggingDevMode: false
 

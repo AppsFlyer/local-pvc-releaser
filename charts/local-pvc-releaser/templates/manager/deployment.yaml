@@ -81,6 +81,8 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
           env:
+            - name: LOG_LEVEL
+              value: {{ .Values.controller.logLevel | default "info"}}
             {{- with .Values.controller.extraEnv }}
               {{- toYaml . | nindent 14 }}
             {{- end }}
