@@ -110,7 +110,7 @@ func main() {
 	collector := exporters.NewCollector()
 	metrics.Registry.MustRegister(collector)
 
-	if err = (&controller.NodeTerminationPVCReconciler{
+	if err = (&controller.PVCReconciler{
 		Client:            mgr.GetClient(),
 		Scheme:            mgr.GetScheme(),
 		Recorder:          mgr.GetEventRecorderFor("local-pvc-releaser"),

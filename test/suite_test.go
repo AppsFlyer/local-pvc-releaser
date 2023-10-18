@@ -78,7 +78,7 @@ var _ = BeforeSuite(func() {
 
 	k8sClient = k8sManager.GetClient()
 	collector := exporters.NewCollector()
-	err = (&controller.NodeTerminationPVCReconciler{
+	err = (&controller.PVCReconciler{
 		Client:            k8sManager.GetClient(),
 		Scheme:            k8sManager.GetScheme(),
 		Logger:            &logr,

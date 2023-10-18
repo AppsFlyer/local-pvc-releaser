@@ -40,6 +40,7 @@ default values.
 | `controller.tolerations`                                 | Node taints to tolerate                                   | `[]`                                                             |
 | `controller.affinity`                                    | Pod affinity                                              | `{}`                                                             |
 | `controller.dryRun`                                      | Enable the controller in dry-run mode                     | `false`                                                          |
+| `controller.logLevel`                                    | Define controller log level                               | `info`                                                           |
 | `controller.loggingDevMode`                              | Enable the controller logger with stack tracing           | `false`                                                          |
 | `controller.extraEnv`                                    | Extra environment variables to be added to the deployment | `{}`                                                             |
 | `prometheus.enabled`                                     | Enabling prometheus exporter                              | `true`                                                           |
