@@ -1,7 +1,7 @@
 name: Release
 on:
   push:
-    tags: [ 'v*.*.*' ]
+    tags: [ '*.*.*' ]
 
 jobs:
 #  docker-buildx:
