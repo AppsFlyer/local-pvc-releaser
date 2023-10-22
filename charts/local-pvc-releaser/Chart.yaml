@@ -5,7 +5,7 @@ description: The local PVC releaser aim to delete persistent volume claims trigg
 type: application
 
 # Chart Version
-version: 0.4.0
+version: 0.0.0
 
 # Application Version
-appVersion: "v0.0.0-rc1"
+appVersion: "v0.1.0"
