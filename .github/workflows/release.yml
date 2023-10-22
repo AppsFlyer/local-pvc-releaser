@@ -1,7 +1,8 @@
 name: Release
 on:
-  release:
-    types: [created, published]
+  push:
+    branches:
+      - add_github_actions_tal
 
 jobs:
   docker-buildx:
