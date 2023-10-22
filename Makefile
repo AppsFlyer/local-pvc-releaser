@@ -1,7 +1,7 @@
 
 # Image URL to use all building/pushing image targets
 TAG ?= $(shell if [ -z "${CI_COMMIT_TAG}" ]; then echo "latest"; else echo ${CI_COMMIT_TAG}; fi)
-IMG ?= "local-pvc-releaser"
+IMG ?= "appsflyer/local-pvc-releaser"
 IMAGE = "${IMG}:${TAG}"
 #GIT
 GIT_URL ?= "github.com/appsflyer/local-pvc-releaser"
@@ -74,12 +74,11 @@ lint: $(GOLINT)
 
 .PHONY: integration-test
 integration-test: generate fmt vet envtest ## Run tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test ./test/... -coverprofile cover.out
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test ./test/... -coverprofile $@-cover.out -covermode atomic; go tool cover -func $@-cover.out
 
 .PHONY: unit-test
 unit-test: generate fmt vet envtest ## Run tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test ./internal/... -coverprofile cover.out
-
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test ./internal/... -coverprofile $@-cover.out -covermode atomic; go tool cover -func $@-cover.out
 ##@ Build
 
 .PHONY: build
