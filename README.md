@@ -1,5 +1,6 @@
 <img src="docs/images/logo.png" width="400" />
 ----
+
 Local-pvc-releaser is a Kubernetes controller that improves the efficiency of managing Persistent Volume Claims (PVC) when unexpected node termination occurs by the cloud provider. In cases like this, the Local-pvc-releaser will delete the relevant PVCs as long as they are bounded to a Persistent Volume (PV) that represent a local storage on the faulty node.
 
 Table of contents
