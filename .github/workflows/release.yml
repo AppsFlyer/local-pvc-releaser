@@ -1,8 +1,7 @@
 name: Release
 on:
   push:
-    branches:
-      - add_github_actions_tal
+    tags: [ '*.*.*' ]
 
 jobs:
 #  docker-buildx:
