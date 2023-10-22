@@ -6,8 +6,8 @@ A Helm chart for local-pvc-releaser, a PVC controller project built for Kubernet
 ## Installing the Chart
 
 ```console
-$ helm repo add local-pvc-releaser https://github.com/AppsFlyer/local-pvc-releaser/charts/local-pvc-releaser
-$ helm install  local-pvc-releaser ./local-pvc-releaser --namespace "local-pvc-releaser" --create-namespace
+$ helm repo add local-pvc-releaser https://AppsFlyer.github.io/local-pvc-releaser
+$ helm install -n <namespace> <release-name>> local-pvc-releaser/local-pvc-releaser
 ```
 
 ## Uninstalling the Chart
