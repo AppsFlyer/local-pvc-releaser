@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - master
+      - add_github_actions_tal
 
 jobs:
   helm-release:
