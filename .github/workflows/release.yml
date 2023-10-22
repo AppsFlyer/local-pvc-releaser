@@ -1,68 +1,44 @@
 name: Release
 on:
-  push:
-    tags: [ '*.*.*' ]
+  release:
+    types: [created, published]
 
 jobs:
-#  docker-buildx:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Docker meta
-#        id: meta
-#        uses: docker/metadata-action@v5
-#        with:
-#          images: appsflyer/local-pvc-releaser
-#          tags: |
-#            type=ref,event=tag
-#            type=semver,pattern={{version}}
-#            type=raw,value=latest,enable={{is_default_branch}}
-#
-#      - name: Validate Docker meta
-#        run: echo "Output is empty, failing!" && exit 1
-#        if: steps.meta.outputs.tags == ''
-#
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v3
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
-#      - name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#
-#      - name: Build and push
-#        uses: docker/build-push-action@v5
-#        with:
-#          context: .
-#          platforms: linux/arm64,linux/amd64
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
-
-  helm-release:
-    permissions:
-      contents: write
+  docker-buildx:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          fetch-depth: 0
+          images: appsflyer/local-pvc-releaser
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: Validate Docker meta
+        run: echo "Output is empty, failing!" && exit 1
+        if: steps.meta.outputs.tags == ''
 
-      - name: Install Helm
-        uses: azure/setup-helm@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.5.0
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/arm64,linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
