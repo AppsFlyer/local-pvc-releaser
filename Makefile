@@ -1,8 +1,8 @@
 
 # Image URL to use all building/pushing image targets
 TAG ?= $(shell if [ -z "${CI_COMMIT_TAG}" ]; then echo "latest"; else echo ${CI_COMMIT_TAG}; fi)
-REGISTRY ?= "<DOCKERHUB>"
-IMG ?= "${REGISTRY}/local-pvc-releaser:${TAG}"
+IMG ?= "local-pvc-releaser"
+IMAGE = "${IMG}:${TAG}"
 #GIT
 GIT_URL ?= "github.com/appsflyer/local-pvc-releaser"
 
@@ -97,11 +97,11 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # TODO: Enable test again
 #docker-build: test ## Build docker image with the manager.
 docker-build: ## Build docker image with the manager.
-	docker build -t ${IMG} .
+	docker build -t ${IMAGE} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
-	docker push ${IMG}
+	docker push ${IMAGE}
 
 # PLATFORMS defines the target platforms for  the manager image be build to provide support to multiple
 # architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:
@@ -115,7 +115,7 @@ docker-buildx: test ## Build and push docker image for the manager for cross-pla
 	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
 	- docker buildx create --name project-v3-builder
 	docker buildx use project-v3-builder
-	- docker buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
+	- docker buildx build --push --platform=$(PLATFORMS) --tag ${IMAGE} -f Dockerfile.cross .
 	- docker buildx rm project-v3-builder
 	rm Dockerfile.cross
 
@@ -135,7 +135,7 @@ uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified 
 
 .PHONY: deploy
 deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
-	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMAGE}
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 .PHONY: undeploy
@@ -144,7 +144,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 DEPLOY_FILE ?= "local-pvc-releaser.yml"
 deploy-yml: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
-	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMAGE}
 	$(KUSTOMIZE) build config/default > ${DEPLOY_FILE}
 
 ##@ Build Dependencies
