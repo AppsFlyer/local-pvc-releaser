@@ -1,0 +1,10 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  # Using 0.0.0.0 since the dind container running the kind image
+  # will accept connections coming to any ip of the dind machine.
+  # if we leave it 127.0.0.1 then outside communucation cant be established.
+  # in practice each gitlab runner has the ip of the docker dind mapped in its /etc/hosts
+  # so each connection is sent to docker_dind_ip:kind_port. because the inner kind container
+  # accepts all connections coming to the dind local ips, it will accept the connection.
+  apiServerAddress: 0.0.0.0
