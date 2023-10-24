@@ -44,7 +44,7 @@ $ helm repo add local-pvc-releaser https://AppsFlyer.github.io/local-pvc-release
 $ helm install -n <namespace> <release-name> local-pvc-releaser/local-pvc-releaser
 ```
 
-For more information, Please refer [here](https://github.com/AppsFlyer/local-pvc-releaser/tree/main/charts/local-pvc-releaser). 
+For more information, please refer [here](/charts/local-pvc-releaser). 
 
 ### Uninstalling the Chart
 
@@ -55,7 +55,7 @@ $ helm delete --purge local-pvc-releaser
 ```
 
 ## Observability
-Local-pvc-releaser controller is publishing the base metrics that are provided by KubeBuilder + additional custom metric indicating about successful PVC deletion and exposed by Prometheus exporter. For more information, Please refer [here](https://github.com/AppsFlyer/local-pvc-releaser/blob/main/docs/metrics.md).
+Local-pvc-releaser controller is publishing the base metrics that are provided by KubeBuilder + additional custom metric indicating about successful PVC deletion and exposed by Prometheus exporter. For more information, please refer [here](/docs/metrics.md).
 #### Custom metrics
 **`deleted_pvc`**
 
