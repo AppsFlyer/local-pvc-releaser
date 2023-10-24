@@ -11,7 +11,7 @@ controller:
 
   image:
     # Repository path to the controller image.
-    repository: "github.com/appsflyer/local-pvc-releaser"
+    repository: "appsflyer/local-pvc-releaser"
     # Tag of the controller image.
     tag:
     # Image pull policy for the controller image.
