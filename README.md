@@ -55,7 +55,7 @@ $ helm delete --purge local-pvc-releaser
 ```
 
 ## Observability
-Local-pvc-releaser controller is publishing the base metrics that are provided by KubeBuilder + additional custom metric indicating about successful PVC deletion and exposed by Prometheus exporter. For more information, Please refer [here](https://github.com/AppsFlyer/Local-pvc-releaser/charts/Local-pvc-releaser/README.md).
+Local-pvc-releaser controller is publishing the base metrics that are provided by KubeBuilder + additional custom metric indicating about successful PVC deletion and exposed by Prometheus exporter. For more information, Please refer [here](https://github.com/AppsFlyer/local-pvc-releaser/blob/main/docs/metrics.md).
 #### Custom metrics
 **`deleted_pvc`**
 
