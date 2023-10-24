@@ -1,3 +1,16 @@
 apiVersion: v1
-entries: {}
-generated: "2023-10-24T16:38:21.531776661Z"
+entries:
+  local-pvc-releaser:
+  - apiVersion: v2
+    appVersion: v0.1.0
+    created: "2023-10-24T17:11:50.158531266Z"
+    description: The local PVC releaser aim to delete persistent volume claims triggered
+      by un-expected node deletion events by the K8s node-controller for making automatic
+      recovery for pods.
+    digest: 70a8c1b6ff507347155c5ecaf7adaed0f6fb5d8221dec13925913d77041f2f38
+    name: local-pvc-releaser
+    type: application
+    urls:
+    - local-pvc-releaser-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-10-24T17:11:50.158543267Z"
