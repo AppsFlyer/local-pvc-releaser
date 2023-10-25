@@ -8,17 +8,16 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog/v2/klogr"
-	"os"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"testing"
 )
 
-func getReconciler() *PVCReconciler {
+func getReconciler() (*PVCReconciler, error) {
 	fakeClient, err := getFakeClient()
 	if err != nil {
 		fmt.Println("unable to create fake client. exiting..")
-		os.Exit(1)
+		return nil, err
 	}
 	logr := klogr.New()
 
@@ -34,7 +33,7 @@ func getReconciler() *PVCReconciler {
 		PvcAnoCustomValue: "enabled",
 	}
 
-	return reconciler
+	return reconciler, nil
 }
 
 func getFakeClient(initObjs ...client.Object) (client.WithWatch, error) {
@@ -46,7 +45,10 @@ func getFakeClient(initObjs ...client.Object) (client.WithWatch, error) {
 }
 
 func TestFilterPVCListByPV(t *testing.T) {
-	reconciler := getReconciler()
+	reconciler, err := getReconciler()
+	if err != nil {
+		t.Error("Failed to initialize client.")
+	}
 
 	// Create a sample PVC list
 	pvcList := &v1.PersistentVolumeClaimList{
@@ -97,7 +99,10 @@ func TestFilterPVCListByPV(t *testing.T) {
 }
 
 func TestFilterPVListByNodeName(t *testing.T) {
-	reconciler := getReconciler()
+	reconciler, err := getReconciler()
+	if err != nil {
+		t.Error("Failed to initialize client.")
+	}
 
 	// Create a sample PV list
 	pvList := &v1.PersistentVolumeList{
