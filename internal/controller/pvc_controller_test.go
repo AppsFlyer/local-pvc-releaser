@@ -46,7 +46,7 @@ func getFakeClient(initObjs ...client.Object) (client.WithWatch, error) {
 
 func TestFilterPVCListByPV(t *testing.T) {
 	reconciler, err := getReconciler()
-	if err != nil {
+	if err != nil || reconciler == nil {
 		t.Error("Failed to initialize client.")
 	}
 
@@ -100,7 +100,7 @@ func TestFilterPVCListByPV(t *testing.T) {
 
 func TestFilterPVListByNodeName(t *testing.T) {
 	reconciler, err := getReconciler()
-	if err != nil {
+	if err != nil || reconciler == nil {
 		t.Error("Failed to initialize client.")
 	}
 
