@@ -64,7 +64,7 @@ func main() {
 			"Enabling this will ensure there is only one active controller manager.")
 	flag.BoolVar(&dryrun, "dry-run", false, "Enable controller in dry-run mode.")
 	flag.BoolVar(&devLogging, "dev-logging", false, "Enable controller logger in dev format with stack tracing.")
-	flag.BoolVar(&pvcSelector, "enable-pvc-selector", true, "Manage only PVC objects marked with custom annotation.")
+	flag.BoolVar(&pvcSelector, "enable-pvc-selector", false, "Manage only PVC objects marked with custom annotation.")
 	flag.StringVar(&pvcAnoCustomKey, "pvc-annotation-custom-key", "appsflyer.com/local-pvc-releaser", "PVC Annotations filter key.")
 	flag.StringVar(&pvcAnoCustomValue, "pvc-annotation-custom-value", "enabled", "PVC Annotations filter value.")
 	flag.Parse()
