@@ -19,7 +19,11 @@ package main
 import (
 	"flag"
 	"os"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/metrics"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
+
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -82,12 +86,12 @@ func main() {
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
-		MetricsBindAddress:     metricsAddr,
-		Port:                   9443,
+		Metrics:                server.Options{BindAddress: metricsAddr},
+		WebhookServer:          webhook.NewServer(webhook.Options{Port: 9443}),
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "ab49af34.appsflyer.com",
-		DryRunClient:           dryrun,
+		Client:                 client.Options{DryRun: &dryrun},
 		// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 		// when the Manager ends. This requires the binary to immediately end when the
 		// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
