@@ -3,7 +3,7 @@ module github.com/AppsFlyer/local-pvc-releaser
 go 1.19
 
 require (
-	github.com/go-logr/logr v1.2.3
+	github.com/go-logr/logr v1.4.1
 	github.com/go-openapi/swag v0.19.14
 	github.com/onsi/ginkgo/v2 v2.6.0
 	github.com/onsi/gomega v1.24.1
