@@ -50,9 +50,10 @@ var _ = Describe("Successful PVC Release", func() {
 			}, timeout, interval).Should(Succeed())
 
 			pvcAnnotations := map[string]string{
-				"appsflyer.com/local-pvc-releaser": "enabled",
+				"appsflyer.com/local-pvc-releaser":   "enabled",
+				"volume.kubernetes.io/selected-node": nodeName,
 			}
-			pvc := objects.Helper().PersistentVolumeClaim().Create(pvcName, storageClassName, pvcAnnotations)
+			pvc := objects.Helper().PersistentVolumeClaim().Create(pvcName, pvName, storageClassName, pvcAnnotations)
 			Expect(k8sClient.Create(ctx, pvc)).Should(Succeed())
 
 			// Create a PersistentVolumeClaim (PVC)
@@ -112,28 +113,14 @@ var _ = Describe("Ignoring PVC cleanup", func() {
 		objects.Helper().Event().DeleteAll(ctx, k8sClient)
 	})
 	Context("When Receiving event on node-termination", func() {
-		It("Should ignore as the PV is not bounded to PVC", func() {
-			By("By Creating a PV and PVC objects with different storage class and triggering node termination event")
-			pv := objects.Helper().PersistentVolume().Create(pvName, nodeName, storageClassName)
-			Expect(k8sClient.Create(ctx, pv)).Should(Succeed())
-
-			fetchedPv := &v1.PersistentVolume{}
-			Eventually(func() error {
-				if err := k8sClient.Get(ctx, types.NamespacedName{Name: pv.Name, Namespace: pv.Namespace}, fetchedPv); err != nil {
-					return err
-				}
-
-				if fetchedPv.Name != pv.Name {
-					return errors.New("Unable to find the PV after creation, creation failed")
-				}
-
-				return nil
-			}, timeout, interval).Should(Succeed())
+		It("Should ignore as there are no PVs attached", func() {
+			By("By Creating only a PVC object")
 
 			pvcAnnotations := map[string]string{
-				"appsflyer.com/local-pvc-releaser": "enabled",
+				"appsflyer.com/local-pvc-releaser":   "enabled",
+				"volume.kubernetes.io/selected-node": nodeName,
 			}
-			pvc := objects.Helper().PersistentVolumeClaim().Create(pvcName, "different-storage-class", pvcAnnotations)
+			pvc := objects.Helper().PersistentVolumeClaim().Create(pvcName, "", "different-storage-class", pvcAnnotations)
 			Expect(k8sClient.Create(ctx, pvc)).Should(Succeed())
 
 			// Create a PersistentVolumeClaim (PVC)
@@ -210,9 +197,10 @@ var _ = Describe("Ignoring PVC cleanup", func() {
 			}, timeout, interval).Should(Succeed())
 
 			pvcAnnotations := map[string]string{
-				"test-should-fail": "true",
+				"test-should-fail":                   "true",
+				"volume.kubernetes.io/selected-node": nodeName,
 			}
-			pvc := objects.Helper().PersistentVolumeClaim().Create(pvcName, "different-storage-class", pvcAnnotations)
+			pvc := objects.Helper().PersistentVolumeClaim().Create(pvcName, pvName, "different-storage-class", pvcAnnotations)
 			Expect(k8sClient.Create(ctx, pvc)).Should(Succeed())
 
 			// Create a PersistentVolumeClaim (PVC)

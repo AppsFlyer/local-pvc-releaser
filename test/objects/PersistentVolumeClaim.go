@@ -12,7 +12,7 @@ import (
 )
 
 type PVC interface {
-	Create(name, storageClassName string, annotations map[string]string) *corev1.PersistentVolumeClaim
+	Create(name, pvName string, storageClassName string, annotations map[string]string) *corev1.PersistentVolumeClaim
 	DeleteAll(ctx context.Context, client client.Client)
 	RemoveProtectionFinalizer(ctx context.Context, client client.Client, pvc *corev1.PersistentVolumeClaim, finalizerName string) error
 }
@@ -24,7 +24,7 @@ func NewPVC() PVC {
 	return &persistentVolumeClaim{}
 }
 
-func (_ persistentVolumeClaim) Create(name, storageClassName string, annotations map[string]string) *corev1.PersistentVolumeClaim {
+func (_ persistentVolumeClaim) Create(name, pvName string, storageClassName string, annotations map[string]string) *corev1.PersistentVolumeClaim {
 	pvc := &corev1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PersistentVolumeClaim",
@@ -46,6 +46,7 @@ func (_ persistentVolumeClaim) Create(name, storageClassName string, annotations
 				},
 			},
 			StorageClassName: &storageClassName,
+			VolumeName:       pvName,
 		},
 	}
 
