@@ -132,7 +132,7 @@ func (r *PVCReconciler) FilterPVCListByNodeName(pvcList *v1.PersistentVolumeClai
 	for i := 0; i < len(pvcList.Items); i++ {
 		pvc := &pvcList.Items[i]
 
-		if pvc.Annotations[PVCnodeAnnotationKey] == nodeName {
+		if pvcNode, exists := pvc.Annotations[PVCnodeAnnotationKey]; exists && pvcNode == nodeName {
 			r.Logger.Info(fmt.Sprintf("pvc - %s is bounded to node - %s. will be marked for pv 'local' plugin scan.", pvc.Name, nodeName))
 			relatedPVCs = append(relatedPVCs, pvc)
 		}
