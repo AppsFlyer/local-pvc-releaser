@@ -16,7 +16,6 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
-# Setting SHELL to bash allows bash commands to be executed by recipes.
 # Options are set to exit when a recipe line exits non-zero or a piped command fails.
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
@@ -64,7 +63,7 @@ vet: ## Run go vet against code.
 
 #Lint
 GOLINT ?=$(LOCALBIN)/golangci-lint
-GOLINT_VERSION ?= 1.50.1
+GOLINT_VERSION ?= 1.61.0
 $(GOLINT): $(LOCALBIN)
 	[ -f $(GOLINT) ] || curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(LOCALBIN) v$(GOLINT_VERSION)
 
