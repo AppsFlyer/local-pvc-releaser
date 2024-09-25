@@ -19,6 +19,7 @@ package test
 import (
 	"context"
 	"github.com/AppsFlyer/local-pvc-releaser/internal/controller"
+	k8szap "sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -55,6 +56,8 @@ var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 	ctx, cancel = context.WithCancel(context.TODO())
 
+	logr := k8szap.New()
+
 	By("bootstrapping test environment")
 	// TODO move to env var
 	LocalCluster := true
@@ -81,6 +84,7 @@ var _ = BeforeSuite(func() {
 		Client:            k8sManager.GetClient(),
 		Scheme:            k8sManager.GetScheme(),
 		DryRun:            false,
+		Logger:            &logr,
 		Recorder:          k8sManager.GetEventRecorderFor("local-pvc-releaser-test"),
 		Collector:         collector,
 		PvcSelector:       true,
