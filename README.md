@@ -25,6 +25,15 @@ The Local-pvc-releaser controller automate the recovery process for pods incase 
 Where previously, manual action had to be taken in order to recover the related pods as their state moved to be "Pending", expecting that the faulty node will recover - Something that will not happen as the faulty node got terminated. <br>
 The Local-pvc-releaser take an active action by deleting those PVCs and let the pods create a new one instead. The creation of a new PVC will represent a demand for a new node creation (as long as there are no available resources in the cluster) for the common autoscalers. When the relevant resources will be allocated, the Kubernetes scheduler will schedule the pod and complete the recovery process..
 
+
+## Compatibility
+- K8s version 1.26+
+- *Dynamic storage provisioners
+
+Note: <br>
+The Local PVC Releaser relies on the well-known Kubernetes label [`volume.kubernetes.io/selected-node`](https://kubernetes.io/docs/reference/labels-annotations-taints/#volume-kubernetes-io-selected-node) to link Persistent Volumes (PVs) and Persistent Volume Claims (PVCs) with a terminated node.<br>
+Consequently, PVs created by static storage provisioners, such as the local-static-provisioner, will not be managed because the binding between PV and PVC is not performed by the Kubernetes control plane and therefore, this well-known label will not be attached.
+
 ## How it works
 The Local-pvc-releaser controller listens to the Kubernetes Node Controller running as part of the cluster control-plane. <br>
 The Kuberentes Node Controller is generating "RemovingNode" event upon any node object removal. This is usually happens when you scale down your cluster or if unexpected termination happen to
