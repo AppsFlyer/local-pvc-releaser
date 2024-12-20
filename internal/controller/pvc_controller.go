@@ -20,7 +20,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
-	"k8s.io/utils/strings/slices"
+	"k8s.io/apimachinery/pkg/util/sets"
 	"strconv"
 
 	"github.com/AppsFlyer/local-pvc-releaser/internal/exporters"
@@ -124,25 +124,61 @@ func (r *PVCReconciler) CleanPVCS(ctx context.Context, pvcs []*v1.PersistentVolu
 	return nil
 }
 
-func (r *PVCReconciler) FilterPVListByNodeName(pvList *v1.PersistentVolumeList, nodeName string) []*v1.PersistentVolume {
-	var relatedPVs []*v1.PersistentVolume
+// GetLocalPersistentVolumeNodeNames returns the node affinity node name(s) for
+// local PersistentVolumes. nil is returned if the PV does not have any
+// specific node affinity node selector terms and match expressions.
+// PersistentVolume with node affinity has select and match expressions
+// in the form of:
+//
+//	nodeAffinity:
+//	  required:
+//	    nodeSelectorTerms:
+//	    - matchExpressions:
+//	      - key: kubernetes.io/hostname
+//	        operator: In
+//	        values:
+//	        - <node1>
+//	        - <node2>
+//
+// This code block belongs to the K8s official repository of 1.28
+func (r *PVCReconciler) GetLocalPersistentVolumeNodeNames(pv *v1.PersistentVolume) []string {
+	// Ignoring PVs without affinity rules or PVs that already got released
+	if pv == nil || pv.Spec.NodeAffinity == nil || pv.Spec.NodeAffinity.Required == nil || pv.Status.Phase != v1.VolumeBound {
+		return nil
+	}
 
-	for i := 0; i < len(pvList.Items); i++ {
-		pv := &pvList.Items[i]
-		// Ignoring PVs without affinity rules or PVs that already got released
-		if pv.Spec.NodeAffinity != nil && pv.Spec.NodeAffinity.Required == nil || pv.Status.Phase != v1.VolumeBound {
-			continue
-		}
-
-		for _, nst := range pv.Spec.NodeAffinity.Required.NodeSelectorTerms {
-			for _, matchEx := range nst.MatchExpressions {
-				if slices.Contains(matchEx.Values, nodeName) {
-					r.Logger.Info(fmt.Sprintf("pv - %s is bounded to node - %s. will be marked for pvc cleanup", pv.Name, nodeName))
-					relatedPVs = append(relatedPVs, pv)
-
-					break
+	var result sets.Set[string]
+	for _, term := range pv.Spec.NodeAffinity.Required.NodeSelectorTerms {
+		var nodes sets.Set[string]
+		for _, matchExpr := range term.MatchExpressions {
+			if matchExpr.Key == v1.LabelHostname && matchExpr.Operator == v1.NodeSelectorOpIn {
+				if nodes == nil {
+					nodes = sets.New(matchExpr.Values...)
+				} else {
+					nodes = nodes.Intersection(sets.New(matchExpr.Values...))
 				}
 			}
+		}
+		result = result.Union(nodes)
+	}
+
+	return sets.List(result)
+}
+
+func (r *PVCReconciler) FilterPVListByNodeName(pvList *v1.PersistentVolumeList, nodeName string) []*v1.PersistentVolume {
+	var relatedPVs []*v1.PersistentVolume
+	var nodeSet []string
+
+	for _, pv := range pvList.Items {
+		nodeSet = r.GetLocalPersistentVolumeNodeNames(&pv)
+		// Assuming only one node attachment
+		if nodeSet == nil || len(nodeSet) != 1 {
+			return nil
+		}
+
+		if nodeSet[0] == nodeName {
+			r.Logger.Info(fmt.Sprintf("pv - %s is bounded to node - %s. will be marked for pvc cleanup", pv.Name, nodeName))
+			relatedPVs = append(relatedPVs, &pv)
 		}
 	}
 
