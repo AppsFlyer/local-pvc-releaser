@@ -7,10 +7,4 @@ layout:
 - go.kubebuilder.io/v4
 projectName: local-pvc-releaser
 repo: github.com/AppsFlyer/local-pvc-releaser
-resources:
-- controller: true
-  domain: appsflyer.com
-  group: local-pvc-releaser
-  kind: PersistentVolumeClaim
-  version: v0.1.0
 version: "3"
