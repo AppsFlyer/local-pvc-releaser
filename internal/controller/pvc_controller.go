@@ -173,7 +173,7 @@ func (r *PVCReconciler) FilterPVListByNodeName(pvList *v1.PersistentVolumeList, 
 		nodeSet = r.GetLocalPersistentVolumeNodeNames(&pv)
 		// Assuming only one node attachment
 		if nodeSet == nil || len(nodeSet) != 1 {
-			return nil
+			continue
 		}
 
 		if nodeSet[0] == nodeName {
