@@ -18,6 +18,13 @@ To uninstall/delete the `local-pvc-releaser` deployment:
 $ helm delete --purge local-pvc-releaser
 ```
 
+## PVC Annotation Selector
+The PVC annotation selector meant to be used as an additional layer of validation so the PVC releaser controller will not delete any PVC out of its scope. <br>
+The annotation selector is by default disabled. For enabling it, a prerequisite condition must be fulfilled by the user which is - annotating the relevant PVCs to be managed by the controller. <br>
+When enabling the annotation selector, the default KV used for filtering the PVCs will be - `appsflyer.com/local-pvc-releaser:enabled`. <br>
+This KV can be also adjusted and configured with:
+* `controller.pvcAnnotationSelector.customAnnotationKey`
+* `controller.pvcAnnotationSelector.customAnnotationValue`
 
 ## Configuring the chart
 

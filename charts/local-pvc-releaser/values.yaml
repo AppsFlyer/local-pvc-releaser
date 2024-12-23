@@ -31,7 +31,7 @@ controller:
 
   # Enable PVC annotations selector
   pvcAnnotationSelector:
-    enabled: true
+    enabled: false
     # Customize PVC annotation selector for key and value
     # customAnnotationKey: ""
     # customAnnotationValue: ""
