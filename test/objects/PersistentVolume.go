@@ -3,7 +3,7 @@ package objects
 import (
 	"context"
 
-	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -68,9 +68,9 @@ func (_ *persistentVolume) Create(pvName, nodeName, storageClassName string) *co
 }
 func (_ *persistentVolume) DeleteAll(ctx context.Context, client client.Client) {
 	pvList := &corev1.PersistentVolumeList{}
-	Expect(client.List(ctx, pvList)).To(Succeed())
+	gomega.Expect(client.List(ctx, pvList)).To(gomega.Succeed())
 
 	for _, pv := range pvList.Items {
-		Expect(client.Delete(ctx, &pv)).To(Succeed())
+		gomega.Expect(client.Delete(ctx, &pv)).To(gomega.Succeed())
 	}
 }
