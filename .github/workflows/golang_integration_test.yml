@@ -46,7 +46,7 @@ jobs:
           
       - name: run integration tests
         run: make integration-test
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: integration_coverage_report
           path: integration-test-cover.out
