@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/uuid"
@@ -25,7 +25,7 @@ func NewEvent() Event {
 type event struct {
 }
 
-func (_ *event) Create(nodeName string, eventReason string) *corev1.Event {
+func (*event) Create(nodeName string, eventReason string) *corev1.Event {
 	event := &corev1.Event{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "event-test",
@@ -50,9 +50,9 @@ func (_ *event) Create(nodeName string, eventReason string) *corev1.Event {
 	return event
 }
 
-func (_ *event) FindByReason(ctx context.Context, client client.Client, reason string) *corev1.Event {
+func (*event) FindByReason(ctx context.Context, client client.Client, reason string) *corev1.Event {
 	eventList := &corev1.EventList{}
-	Expect(client.List(ctx, eventList)).To(Succeed())
+	gomega.Expect(client.List(ctx, eventList)).To(gomega.Succeed())
 
 	for _, event := range eventList.Items {
 		if event.Reason == reason {
@@ -63,11 +63,11 @@ func (_ *event) FindByReason(ctx context.Context, client client.Client, reason s
 	return nil
 }
 
-func (_ *event) DeleteAll(ctx context.Context, client client.Client) {
+func (*event) DeleteAll(ctx context.Context, client client.Client) {
 	eventList := &corev1.EventList{}
-	Expect(client.List(ctx, eventList)).To(Succeed())
+	gomega.Expect(client.List(ctx, eventList)).To(gomega.Succeed())
 
 	for _, e := range eventList.Items {
-		Expect(client.Delete(ctx, &e)).To(Succeed())
+		gomega.Expect(client.Delete(ctx, &e)).To(gomega.Succeed())
 	}
 }

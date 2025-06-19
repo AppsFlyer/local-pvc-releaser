@@ -19,7 +19,7 @@ func NewNode() Node {
 	return &kubernetesNode{}
 }
 
-func (_ kubernetesNode) Create() *corev1.Node {
+func (kubernetesNode) Create() *corev1.Node {
 	node := &corev1.Node{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Node",

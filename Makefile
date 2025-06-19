@@ -64,7 +64,7 @@ vet: ## Run go vet against code.
 
 #Lint
 GOLINT ?=$(LOCALBIN)/golangci-lint
-GOLINT_VERSION ?= 1.50.1
+GOLINT_VERSION ?= 2.1.6
 $(GOLINT): $(LOCALBIN)
 	[ -f $(GOLINT) ] || curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(LOCALBIN) v$(GOLINT_VERSION)
 
