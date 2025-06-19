@@ -19,8 +19,9 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus"
 	"strconv"
+
+	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/AppsFlyer/local-pvc-releaser/internal/exporters"
 
@@ -112,7 +113,7 @@ func (r *PVCReconciler) CleanPVCS(ctx context.Context, pvcs []*v1.PersistentVolu
 			continue
 		}
 
-		err := r.Client.Delete(ctx, pvc)
+		err := r.Delete(ctx, pvc)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("failed to delete object - %s,", pvc.GetName()))
 		}
