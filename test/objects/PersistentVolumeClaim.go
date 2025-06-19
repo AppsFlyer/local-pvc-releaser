@@ -24,7 +24,7 @@ func NewPVC() PVC {
 	return &persistentVolumeClaim{}
 }
 
-func (_ persistentVolumeClaim) Create(name, pvName string, storageClassName string, annotations map[string]string) *corev1.PersistentVolumeClaim {
+func (persistentVolumeClaim) Create(name, pvName string, storageClassName string, annotations map[string]string) *corev1.PersistentVolumeClaim {
 	pvc := &corev1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PersistentVolumeClaim",
@@ -53,7 +53,7 @@ func (_ persistentVolumeClaim) Create(name, pvName string, storageClassName stri
 	return pvc
 }
 
-func (_ persistentVolumeClaim) RemoveProtectionFinalizer(ctx context.Context, client client.Client, pvc *corev1.PersistentVolumeClaim, finalizerName string) error {
+func (persistentVolumeClaim) RemoveProtectionFinalizer(ctx context.Context, client client.Client, pvc *corev1.PersistentVolumeClaim, finalizerName string) error {
 	if swag.ContainsStrings(pvc.Finalizers, finalizerName) {
 		pvc.Finalizers = removeString(pvc.Finalizers, finalizerName)
 		gomega.Expect(client.Update(ctx, pvc)).To(gomega.Succeed())

@@ -21,7 +21,7 @@ func NewPV() PV {
 	return &persistentVolume{}
 }
 
-func (_ *persistentVolume) Create(pvName, nodeName, storageClassName string) *corev1.PersistentVolume {
+func (*persistentVolume) Create(pvName, nodeName, storageClassName string) *corev1.PersistentVolume {
 	fsType := "ntfs"
 	pv := &corev1.PersistentVolume{
 		TypeMeta: metav1.TypeMeta{
@@ -66,7 +66,8 @@ func (_ *persistentVolume) Create(pvName, nodeName, storageClassName string) *co
 
 	return pv
 }
-func (_ *persistentVolume) DeleteAll(ctx context.Context, client client.Client) {
+
+func (*persistentVolume) DeleteAll(ctx context.Context, client client.Client) {
 	pvList := &corev1.PersistentVolumeList{}
 	gomega.Expect(client.List(ctx, pvList)).To(gomega.Succeed())
 
