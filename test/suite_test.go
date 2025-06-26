@@ -18,19 +18,20 @@ package test
 
 import (
 	"context"
-	"github.com/AppsFlyer/local-pvc-releaser/internal/controller"
 	"testing"
+
+	"github.com/AppsFlyer/local-pvc-releaser/internal/controller"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog/v2/klogr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+
 	//+kubebuilder:scaffold:imports
 
 	"github.com/AppsFlyer/local-pvc-releaser/internal/exporters"
@@ -55,7 +56,6 @@ func TestAPIs(t *testing.T) {
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 	ctx, cancel = context.WithCancel(context.TODO())
-	logr := klogr.New()
 	By("bootstrapping test environment")
 	// TODO move to env var
 	LocalCluster := true
@@ -81,7 +81,7 @@ var _ = BeforeSuite(func() {
 	err = (&controller.PVCReconciler{
 		Client:            k8sManager.GetClient(),
 		Scheme:            k8sManager.GetScheme(),
-		Logger:            &logr,
+		Logger:            &logf.Log,
 		DryRun:            false,
 		Recorder:          k8sManager.GetEventRecorderFor("local-pvc-releaser-test"),
 		Collector:         collector,

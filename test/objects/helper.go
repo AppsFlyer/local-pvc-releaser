@@ -9,9 +9,9 @@ type Utils interface {
 type utils struct {
 }
 
-func (_ *utils) PersistentVolumeClaim() PVC { return NewPVC() }
-func (_ *utils) PersistentVolume() PV       { return NewPV() }
-func (_ *utils) Event() Event               { return NewEvent() }
+func (*utils) PersistentVolumeClaim() PVC { return NewPVC() }
+func (*utils) PersistentVolume() PV       { return NewPV() }
+func (*utils) Event() Event               { return NewEvent() }
 
 func Helper() Utils {
 	return &utils{}

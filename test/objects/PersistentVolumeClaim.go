@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/go-openapi/swag"
-	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,7 +24,7 @@ func NewPVC() PVC {
 	return &persistentVolumeClaim{}
 }
 
-func (_ persistentVolumeClaim) Create(name, pvName string, storageClassName string, annotations map[string]string) *corev1.PersistentVolumeClaim {
+func (persistentVolumeClaim) Create(name, pvName string, storageClassName string, annotations map[string]string) *corev1.PersistentVolumeClaim {
 	pvc := &corev1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PersistentVolumeClaim",
@@ -53,10 +53,10 @@ func (_ persistentVolumeClaim) Create(name, pvName string, storageClassName stri
 	return pvc
 }
 
-func (_ persistentVolumeClaim) RemoveProtectionFinalizer(ctx context.Context, client client.Client, pvc *corev1.PersistentVolumeClaim, finalizerName string) error {
-	if swag.ContainsStrings(pvc.ObjectMeta.Finalizers, finalizerName) {
-		pvc.ObjectMeta.Finalizers = removeString(pvc.ObjectMeta.Finalizers, finalizerName)
-		Expect(client.Update(ctx, pvc)).To(Succeed())
+func (persistentVolumeClaim) RemoveProtectionFinalizer(ctx context.Context, client client.Client, pvc *corev1.PersistentVolumeClaim, finalizerName string) error {
+	if swag.ContainsStrings(pvc.Finalizers, finalizerName) {
+		pvc.Finalizers = removeString(pvc.Finalizers, finalizerName)
+		gomega.Expect(client.Update(ctx, pvc)).To(gomega.Succeed())
 	}
 
 	return nil
@@ -64,11 +64,11 @@ func (_ persistentVolumeClaim) RemoveProtectionFinalizer(ctx context.Context, cl
 
 func (claim persistentVolumeClaim) DeleteAll(ctx context.Context, client client.Client) {
 	pvcList := &corev1.PersistentVolumeClaimList{}
-	Expect(client.List(ctx, pvcList)).To(Succeed())
+	gomega.Expect(client.List(ctx, pvcList)).To(gomega.Succeed())
 
 	for _, pvc := range pvcList.Items {
-		Expect(claim.RemoveProtectionFinalizer(ctx, client, &pvc, "kubernetes.io/pvc-protection")).To(Succeed())
-		Expect(client.Delete(ctx, &pvc)).To(Succeed())
+		gomega.Expect(claim.RemoveProtectionFinalizer(ctx, client, &pvc, "kubernetes.io/pvc-protection")).To(gomega.Succeed())
+		gomega.Expect(client.Delete(ctx, &pvc)).To(gomega.Succeed())
 	}
 }
 
